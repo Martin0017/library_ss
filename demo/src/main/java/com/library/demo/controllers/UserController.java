@@ -1,8 +1,8 @@
 package com.library.demo.controllers;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.library.demo.models.User;
 import com.library.demo.services.user.UserService;
-
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/users") // Definir la ruta base para todos los endpoints en este controlador
+@RequestMapping("/users")
 public class UserController {
 
     private UserService service;
-    
+
     public UserController(UserService service) {
         this.service = service;
     }
@@ -42,6 +43,7 @@ public class UserController {
         if(!o.isPresent()) {
             return ResponseEntity.notFound().build();
         }
+        
         return ResponseEntity.ok().body(o.get());
     }
 
@@ -58,6 +60,16 @@ public class UserController {
         User userDb = service.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(userDb);
     }
+
+    @PostMapping("/byemail")
+    public ResponseEntity<Optional<User>> findByEmailUser(@Valid @RequestBody User user, BindingResult result){
+        if(result.hasErrors()){
+            this.validar(result);
+        }
+        Optional<User> userDb = service.findByEmail(user.getEmailUser());
+        return ResponseEntity.status(HttpStatus.CREATED).body(userDb);
+    }
+    
 
     @PutMapping("/{id}") 
     public ResponseEntity<User> actualizar(@Valid @RequestBody User user, @PathVariable Long id, BindingResult result){

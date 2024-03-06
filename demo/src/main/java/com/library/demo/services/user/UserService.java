@@ -2,6 +2,7 @@ package com.library.demo.services.user;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import com.library.demo.models.User;
 
@@ -18,4 +19,8 @@ public interface UserService {
 	public User update(Long id, User author);
 	
 	public void deleteById(Long id);
+
+	public Optional<User> findByEmail(String email);
+
+	public UserDetailsService userDetailsService();
 }

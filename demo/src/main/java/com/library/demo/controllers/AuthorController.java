@@ -20,7 +20,9 @@ import com.library.demo.models.Author;
 import com.library.demo.services.author.AuthorService;
 
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/authors") // Definir la ruta base para todos los endpoints en este controlador
 public class AuthorController {

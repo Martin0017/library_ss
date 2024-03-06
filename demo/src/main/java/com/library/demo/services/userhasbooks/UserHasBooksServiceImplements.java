@@ -39,7 +39,7 @@ public class UserHasBooksServiceImplements implements UserHasBooksService {
     @Override
     public UserHasBooks update(Long id, UserHasBooks userHasBooks) {
         if (repository.existsById(id)) {
-            userHasBooks.setIdUser(id);
+            userHasBooks.setIdUserHasBook(id);
             return repository.save(userHasBooks);
         } else {
             return null;

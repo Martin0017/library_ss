@@ -22,7 +22,9 @@ import com.library.demo.services.author.AuthorService;
 import com.library.demo.services.book.BookService;
 
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/books") // Definir la ruta base para todos los endpoints en este controlador
 public class BookController {
@@ -81,6 +83,13 @@ public class BookController {
         if(result.hasErrors()){
             this.validar(result);
         }
+        Long authorId = book.getIdAuthor();
+        Optional<Author> authorOptional = serviceAuthor.findById(authorId);
+        if (authorOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Author author = authorOptional.get();
+        book.setAuthor(author);
         Book bookDb = service.update(id, book);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(bookDb);
     }

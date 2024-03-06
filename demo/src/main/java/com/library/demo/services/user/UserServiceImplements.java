@@ -2,6 +2,8 @@ package com.library.demo.services.user;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.library.demo.models.User;
@@ -50,5 +52,20 @@ public class UserServiceImplements implements UserService {
     public void deleteById(Long id) {
         repository.deleteById(id);
     }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return repository.findByEmailUser(email) ;
+    }
+
+    @Override
+public UserDetailsService userDetailsService() {
+    return username -> {
+        User user = repository.findByEmailUser(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        user.setUserName(username);
+        return user;
+    };
+}
     
 }

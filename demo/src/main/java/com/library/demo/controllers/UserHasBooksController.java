@@ -25,7 +25,9 @@ import com.library.demo.services.user.UserService;
 import com.library.demo.services.userhasbooks.UserHasBooksService;
 
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/userhasbooks") // Definir la ruta base para todos los endpoints en este controlador
 public class UserHasBooksController {
@@ -92,12 +94,30 @@ public class UserHasBooksController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserHasBooks> actualizar(@Valid @RequestBody UserHasBooks book, @PathVariable Long id,
-            BindingResult result) {
+    public ResponseEntity<UserHasBooks> actualizar(@Valid @RequestBody UserHasBooks userHasBooks, @PathVariable Long id,
+            BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             this.validar(result);
         }
-        UserHasBooks bookDb = service.update(id, book);
+        Long bookId = userHasBooks.getIdBook();
+        Long userId = userHasBooks.getIdUser();
+
+        Optional<Book> bookOptional = serviceBook.findById(bookId);
+        Optional<User> userOptional = serviceUser.findById(userId);
+
+        if (userOptional.isEmpty()) {
+            throw new NotFoundException();
+        }
+        User user = userOptional.get();
+        userHasBooks.setUser(user);
+
+        if (bookOptional.isEmpty()) {
+            throw new NotFoundException();
+        }
+        Book book = bookOptional.get();
+        userHasBooks.setBook(book);
+
+        UserHasBooks bookDb = service.update(id, userHasBooks);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(bookDb);
     }
 
